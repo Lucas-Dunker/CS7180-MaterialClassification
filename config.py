@@ -38,8 +38,9 @@ FMD_CATEGORIES = [
     "wood",
 ]
 
-TRAIN_PER_CATEGORY = 95
+TRAIN_PER_CATEGORY = 50
+
+CACHE_SIZE = 100  # For bilateral filter
 
 MODEL_DIR = Path("./models")
 PLOT_DIR = Path("./plotting")
-CACHE_SIZE = 100  # For bilateral filter cache
