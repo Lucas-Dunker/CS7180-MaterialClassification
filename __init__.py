@@ -1,9 +1,8 @@
 """
-Material Recognition System
+CS 7180, SpTp. Advanced Perception
+Lucas Dunker, 10/18/25
 
-A computer vision system for recognizing material categories from images,
-based on "Recognizing Materials Using Perceptually Inspired Features"
-(Sharan et al., 2013).
+Recognizing Materials Using Perceptually Inspired Features
 """
 
 from .models.classifier import MaterialRecognitionSystem
