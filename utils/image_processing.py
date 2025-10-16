@@ -56,7 +56,6 @@ class ImageProcessor:
         else:
             gray = img
         
-        # Calculate thresholds based on gradient magnitudes
         gradients = cv2.Sobel(gray, cv2.CV_32F, 1, 1)
         upper_threshold = np.percentile(np.abs(gradients), threshold_ratio * 100)
         lower_threshold = upper_threshold * lower_ratio
@@ -77,7 +76,7 @@ class ImageProcessor:
             List of contours
         """
         contours, _ = cv2.findContours(edge_map, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-        # Filter out short contours
+
         filtered_contours = [c for c in contours if len(c) >= min_length]
         return filtered_contours
     

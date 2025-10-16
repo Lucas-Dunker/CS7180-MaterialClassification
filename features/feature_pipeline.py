@@ -29,7 +29,6 @@ class FeaturePipeline:
         """
         features = {}
         
-        # Apply bilateral filtering
         base, residual = self.processor.bilateral_filter(img)
         residual_normalized = np.clip(residual + 128, 0, 255).astype(np.uint8)
         

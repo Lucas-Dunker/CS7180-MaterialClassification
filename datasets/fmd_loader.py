@@ -46,7 +46,6 @@ def load_fmd_dataset(fmd_path: str,
             images.append(img)
             labels.append(cat_idx)
             
-            # Load corresponding mask if it exists
             mask_file = mask_path / img_file.name
             if mask_file.exists():
                 mask = cv2.imread(str(mask_file), cv2.IMREAD_GRAYSCALE)

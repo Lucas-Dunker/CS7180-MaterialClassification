@@ -77,7 +77,6 @@ def train_material_recognizer(fmd_path: str,
     total_time = time.time() - start_time
     print(f"\nTotal training time: {total_time:.1f} seconds")
     
-    # Save model
     system.save_model(model_name)
     
     return system
