@@ -15,7 +15,7 @@ from datasets.fmd_loader import (
     split_dataset_per_category,
     print_dataset_info,
 )
-from config import FMD_CATEGORIES, TRAIN_PER_CATEGORY, MODEL_DIR, PLOT_DIR
+from config import FMD_CATEGORIES, TRAIN_PER_CATEGORY, PLOT_DIR
 
 
 def train_material_recognizer(

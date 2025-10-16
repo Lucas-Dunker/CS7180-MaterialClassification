@@ -13,15 +13,13 @@ from analysis_plots import (
     plot_error_analysis,
 )
 
-
 def load_results(predictions_path: str, labels_path: str):
     """Load saved predictions and labels."""
     y_pred = np.load(predictions_path)
     y_true = np.load(labels_path)
     return y_true, y_pred
 
-
-def generate_all_plots(y_true, y_pred, output_dir: str = "plots"):
+def generate_all_plots(y_true, y_pred, output_dir: str = "./plotting"):
     """Generate all visualization plots."""
 
     # Create output directory
