@@ -74,7 +74,7 @@ def split_dataset_per_category(
     labels: np.ndarray,
     masks: List[np.ndarray] | List[None],
     train_per_category: int = 50,
-    random_seed: int = 42,
+    random_seed: int = 40,
 ) -> Tuple:
     """
     Split dataset with exact number of samples per category.

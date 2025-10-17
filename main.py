@@ -24,7 +24,7 @@ from datasets.fmd_loader import (
 )
 from config import FMD_CATEGORIES, TRAIN_PER_CATEGORY, PLOT_DIR
 
-
+ 
 def train_material_recognizer(
     fmd_path: str, model_name: str = "material_recognition", use_masks: bool = True
 ):

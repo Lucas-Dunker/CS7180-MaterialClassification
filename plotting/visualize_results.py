@@ -104,12 +104,9 @@ def generate_all_plots(y_true, y_pred, output_dir: str = "./plotting"):
 
 
 if __name__ == "__main__":
-    # Load your saved predictions and labels
-    # Update these paths to match your saved files
     y_true, y_pred = load_results(
         predictions_path="./plotting/predictions.npy",
         labels_path="./plotting/true_labels.npy",
     )
 
-    # Generate all plots
     generate_all_plots(y_true, y_pred)

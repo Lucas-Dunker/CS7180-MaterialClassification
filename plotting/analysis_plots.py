@@ -63,10 +63,7 @@ def plot_error_analysis(
                     }
                 )
 
-    # Sort by count
     misclassifications.sort(key=lambda x: x["count"], reverse=True)
-
-    # Create figure with subplots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
 
     # Plot 1: Top misclassification pairs
@@ -159,10 +156,8 @@ def plot_accuracy_comparison(
         acc = (y_true == y_pred).mean()
         accuracies.append(acc)
 
-    # Create figure
     fig, ax = plt.subplots(figsize=figsize)
 
-    # Create bar chart
     bars = ax.bar(
         range(len(model_names)),
         accuracies,

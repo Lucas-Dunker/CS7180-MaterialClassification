@@ -67,7 +67,7 @@ class MaterialRecognitionSystem:
 
                 kmeans = MiniBatchKMeans(
                     n_clusters=self.n_clusters[feat_name],
-                    random_state=42,
+                    random_state=40,
                     batch_size=min(1000, len(all_features)),
                     n_init=10,
                     max_iter=300,
@@ -132,7 +132,7 @@ class MaterialRecognitionSystem:
         print("Training SVM with histogram intersection kernel...")
         K_train = self.histogram_intersection_kernel(histograms, histograms)
 
-        self.svm_classifier = SVC(kernel="precomputed", C=1.0, random_state=42)
+        self.svm_classifier = SVC(kernel="precomputed", C=1.0, random_state=40)
         self.svm_classifier.fit(K_train, labels)
         print("SVM training completed")
 
