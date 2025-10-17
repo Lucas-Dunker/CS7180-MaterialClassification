@@ -18,7 +18,10 @@ from config import FEATURE_CONFIG, MODEL_DIR
 
 
 class MaterialRecognitionSystem:
-    """Material recognition system matching paper specifications."""
+    """
+    A material recognition system inspired from "Recognizing Materials Using Perceptually Inspired Features"
+    (Sharan et al., 2013).
+    """
 
     def __init__(self, n_clusters_per_feature: Optional[Dict[str, int]] = None):
         """
@@ -67,7 +70,7 @@ class MaterialRecognitionSystem:
 
                 kmeans = MiniBatchKMeans(
                     n_clusters=self.n_clusters[feat_name],
-                    random_state=40,
+                    random_state=43,
                     batch_size=min(1000, len(all_features)),
                     n_init=10,
                     max_iter=300,
@@ -84,7 +87,7 @@ class MaterialRecognitionSystem:
             features: Dictionary mapping feature names to feature arrays
 
         Returns:
-            Concatenated histogram of visual words
+            A concatenated histogram of visual words
         """
         histograms = []
 
@@ -111,7 +114,16 @@ class MaterialRecognitionSystem:
 
     @staticmethod
     def histogram_intersection_kernel(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
-        """Compute histogram intersection kernel."""
+        """
+        Compute a histogram intersection kernel.
+        
+        Args:
+            X: Array of shape (n_samples_X, n_features)
+            Y: Array of shape (n_samples_Y, n_features)
+            
+        Returns:
+            Kernel matrix of shape (n_samples_X, n_samples_Y)
+        """
         X = np.array(X, dtype=np.float32)
         Y = np.array(Y, dtype=np.float32)
         return np.array(
@@ -120,7 +132,7 @@ class MaterialRecognitionSystem:
 
     def train_svm(self, histograms: np.ndarray, labels: np.ndarray):
         """
-        Train SVM classifier with histogram intersection kernel.
+        Train an SVM classifier with histogram intersection kernels.
 
         Args:
             histograms: Array of bag-of-words histograms for training images
@@ -132,7 +144,7 @@ class MaterialRecognitionSystem:
         print("Training SVM with histogram intersection kernel...")
         K_train = self.histogram_intersection_kernel(histograms, histograms)
 
-        self.svm_classifier = SVC(kernel="precomputed", C=1.0, random_state=40)
+        self.svm_classifier = SVC(kernel="precomputed", C=1.0, random_state=43)
         self.svm_classifier.fit(K_train, labels)
         print("SVM training completed")
 
@@ -196,7 +208,7 @@ class MaterialRecognitionSystem:
         return accuracy, predictions
 
     def save_model(self, name: str = "material_recognition"):
-        """Save model to disk."""
+        """Save a trained model and its parameters to disk."""
         save_path = self.model_dir / name
         save_path.mkdir(exist_ok=True)
 
@@ -220,7 +232,7 @@ class MaterialRecognitionSystem:
         print(f"Model saved to {save_path}")
 
     def load_model(self, name: str = "material_recognition"):
-        """Load model from disk."""
+        """Load a trained model from disk."""
         load_path = self.model_dir / name
 
         if not load_path.exists():

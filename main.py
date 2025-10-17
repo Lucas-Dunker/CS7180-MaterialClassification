@@ -24,7 +24,7 @@ from datasets.fmd_loader import (
 )
 from config import FMD_CATEGORIES, TRAIN_PER_CATEGORY, PLOT_DIR
 
- 
+
 def train_material_recognizer(
     fmd_path: str, model_name: str = "material_recognition", use_masks: bool = True
 ):
@@ -205,7 +205,6 @@ def main():
         system.load_model(args.model_name)
         predict_single_image(system, args.predict, args.mask)
     else:
-        # Training and evaluation
         if args.evaluate_only:
             system = MaterialRecognitionSystem()
             system.load_model(args.model_name)
@@ -214,7 +213,6 @@ def main():
                 args.fmd_path, args.model_name, not args.no_masks
             )
 
-        # Evaluation
         accuracy, _ = evaluate_model(system, args.fmd_path, not args.no_masks)
         print(f"\nFinal test accuracy: {accuracy:.2%}")
 

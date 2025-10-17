@@ -10,6 +10,7 @@ Advanced analysis plots for material recognition.
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 from typing import List, Dict, Optional
 from sklearn.metrics import confusion_matrix
 from matplotlib.ticker import FuncFormatter
@@ -20,7 +21,7 @@ def plot_error_analysis(
     y_pred: np.ndarray,
     categories: List[str] = [],
     figsize: tuple = (12, 8),
-    save_path: str = "",
+    save_path: str = "error_analysis.png",
 ):
     """
     Analyze and visualize common misclassifications.
@@ -139,7 +140,7 @@ def plot_error_analysis(
 
 
 def plot_accuracy_comparison(
-    results_dict: Dict[str, tuple], figsize: tuple = (10, 6), save_path: str = ""
+    results_dict: Dict[str, tuple], figsize: tuple = (10, 6), save_path: str = "accuracy_comparison.png"
 ):
     """
     Compare accuracy across different models or configurations.

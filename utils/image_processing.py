@@ -9,16 +9,16 @@ Image processing utilities for material recognition.
 
 import cv2
 import numpy as np
-from typing import Tuple, Dict
-from config import FEATURE_CONFIG, CACHE_SIZE
 
+from typing import Tuple, Dict
+from config import FEATURE_CONFIG, BILATERAL_CACHE_SIZE
 
 class ImageProcessor:
-    """Handles image preprocessing operations."""
+    """Handles image preprocessing operations and utility functions for feature extraction."""
 
     def __init__(self):
         self.bilateral_cache: Dict[int, Tuple[np.ndarray, np.ndarray]] = {}
-        self.cache_size = CACHE_SIZE
+        self.cache_size = BILATERAL_CACHE_SIZE
 
     def bilateral_filter(
         self,
@@ -69,12 +69,17 @@ class ImageProcessor:
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         else:
             gray = img
-
-        gradients = cv2.Sobel(gray, cv2.CV_32F, 1, 1)
-        upper_threshold = np.percentile(np.abs(gradients), threshold_ratio * 100)
-        lower_threshold = upper_threshold * lower_ratio
-
-        edges = cv2.Canny(gray, float(lower_threshold), float(upper_threshold))
+    
+        # Compute gradients magnitude
+        grad_x = cv2.Sobel(gray, cv2.CV_32F, 1, 0, ksize=3)
+        grad_y = cv2.Sobel(gray, cv2.CV_32F, 0, 1, ksize=3)
+        magnitude = np.sqrt(grad_x**2 + grad_y**2)
+        
+        # Use percentile-based thresholds
+        upper_threshold = float(np.percentile(magnitude, threshold_ratio * 100))
+        lower_threshold = float(upper_threshold * lower_ratio)
+        
+        edges = cv2.Canny(gray, lower_threshold, upper_threshold)
         return edges
 
     def extract_contours(self, edge_map: np.ndarray, min_length: int = 10) -> list:

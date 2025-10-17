@@ -9,6 +9,7 @@ Main script to load saved predictions and generate all plots.
 
 import numpy as np
 import os
+
 from accuracy_plots import (
     plot_confusion_matrix,
     plot_per_category_accuracy,
@@ -18,11 +19,13 @@ from analysis_plots import (
     plot_error_analysis,
 )
 
+
 def load_results(predictions_path: str, labels_path: str):
     """Load saved predictions and labels."""
     y_pred = np.load(predictions_path)
     y_true = np.load(labels_path)
     return y_true, y_pred
+
 
 def generate_all_plots(y_true, y_pred, output_dir: str = "./plotting"):
     """Generate all visualization plots."""

@@ -10,9 +10,10 @@ Accuracy visualization for material recognition results.
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
+
 from typing import List
 from sklearn.metrics import confusion_matrix, classification_report
-import pandas as pd
 from matplotlib.ticker import FuncFormatter
 
 
@@ -21,7 +22,7 @@ def plot_confusion_matrix(
     y_pred: np.ndarray,
     categories: List[str] = [],
     figsize: tuple = (10, 8),
-    save_path: str = "",
+    save_path: str = "confusion_matrix.png",
     normalize: bool = True,
 ):
     """
@@ -49,7 +50,6 @@ def plot_confusion_matrix(
             "wood",
         ]
 
-    # Compute confusion matrix
     cm = confusion_matrix(y_true, y_pred)
 
     if normalize:
@@ -62,10 +62,8 @@ def plot_confusion_matrix(
         fmt = "d"
         title = "Confusion Matrix"
 
-    # Create figure
     fig, ax = plt.subplots(figsize=figsize)
-
-    # Plot heatmap
+    
     sns.heatmap(
         cm_display,
         annot=True,
@@ -92,7 +90,6 @@ def plot_confusion_matrix(
 
     plt.show()
 
-    # Print accuracy
     accuracy = np.sum(y_true == y_pred) / len(y_true)
     print(f"Overall Accuracy: {accuracy:.2%}")
 
@@ -104,7 +101,7 @@ def plot_per_category_accuracy(
     y_pred: np.ndarray,
     categories: List[str] = [],
     figsize: tuple = (12, 6),
-    save_path: str = "",
+    save_path: str = "per_category_accuracy.png",
 ):
     """
     Plot per-category accuracy as a bar chart.
@@ -130,7 +127,6 @@ def plot_per_category_accuracy(
             "wood",
         ]
 
-    # Calculate per-category accuracy
     accuracies = []
     for i in range(len(categories)):
         mask = y_true == i
@@ -145,10 +141,8 @@ def plot_per_category_accuracy(
     sorted_categories = [categories[i] for i in sorted_indices]
     sorted_accuracies = [accuracies[i] for i in sorted_indices]
 
-    # Create figure
     fig, ax = plt.subplots(figsize=figsize)
 
-    # Create bar chart
     viridis = plt.cm.get_cmap("viridis")
     bars = ax.bar(
         range(len(categories)),
@@ -156,7 +150,6 @@ def plot_per_category_accuracy(
         color=viridis(np.linspace(0.3, 0.9, len(categories))),
     )
 
-    # Add percentage labels on bars
     for i, (bar, acc) in enumerate(zip(bars, sorted_accuracies)):
         height = bar.get_height()
         ax.text(
@@ -183,7 +176,9 @@ def plot_per_category_accuracy(
     ax.set_title("Per-Category Recognition Accuracy", fontsize=14, fontweight="bold")
     ax.set_xticks(range(len(categories)))
     ax.set_ylim(0, 1.05)
+    
     ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.0%}"))
+    
     ax.legend(loc="lower right")
     ax.legend(loc="lower right")
     ax.grid(axis="y", alpha=0.3)
@@ -203,7 +198,7 @@ def plot_classification_report(
     y_pred: np.ndarray,
     categories: List[str] = [],
     figsize: tuple = (10, 6),
-    save_path: str = "",
+    save_path: str = "classification_report.png",
 ):
     """
     Plot classification report as a heatmap.
@@ -229,21 +224,14 @@ def plot_classification_report(
             "wood",
         ]
 
-    # Generate classification report
     report = classification_report(
         y_true, y_pred, target_names=categories, output_dict=True
     )
 
-    # Convert to DataFrame
     df_report = pd.DataFrame(report).transpose()
-
-    # Select only the metrics we want to display
     metrics_df = df_report[["precision", "recall", "f1-score"]].iloc[:-3]
-
-    # Create figure
     fig, ax = plt.subplots(figsize=figsize)
 
-    # Plot heatmap
     sns.heatmap(
         metrics_df.T,
         annot=True,

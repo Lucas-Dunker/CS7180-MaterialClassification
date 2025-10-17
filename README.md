@@ -4,50 +4,52 @@ A computer vision system for recognizing material categories from images, implem
 
 ## Overview
 
-This system can classify images into 10 material categories (fabric, foliage, glass, leather, metal, paper, plastic, stone, water, wood) using a combination of perceptually-inspired features and machine learning. It achieves approximately 57% accuracy on the Flickr Material Database (FMD), significantly outperforming previous texture recognition methods on this challenging dataset.
+This system can classify images into 10 material categories (fabric, foliage, glass, leather, metal, paper, plastic, stone, water, wood) using a combination of perceptually-inspired features and machine learning. It achieves approximately 54% accuracy on the Flickr Material Database (FMD) over the average of several iterations, significantly outperforming previous texture recognition methods at the time of this paper's publication.
+
+This project was created over the span of 1-2 weeks on both Window 11 and MacOS devices. Due to the project being written in Python3, it is inherently machine-agnostic. To generate the plots and model weights used in the project report, please follow the usage instructions outlined below.
 
 ## Features
 
-8 Feature Types: Color, texture (Jet, SIFT), micro-texture, curvature, and edge-based features
-Bag-of-Words Model: Visual vocabulary construction using K-means clustering
-SVM Classification: Using histogram intersection kernel for optimal performance
-Bilateral Filtering: For separating base structure from micro-texture
-Edge-based HOG: Novel features measuring reflectance properties along edges
-Caching System: Efficient bilateral filter caching for faster processing
-Modular Design: Clean separation between feature extraction, classification, and data loading
+- 8 Feature Extraction Types: Color, texture (Jet, SIFT), micro-texture, curvature, and edge-based features
+- Bag-of-Words Model: Visual vocabulary construction using K-means clustering
+- SVM Classification: Using histogram intersection kernel for optimal performance
+- Bilateral Filtering for separating base structure from micro-texture
+- Parallel Processing: Multi-core support for faster feature extraction
+- Comprehensive Visualization: Confusion matrices, per-category accuracy, and error analysis
+- Caching System: Efficient bilateral filter caching for faster processing
+- Modular Design: Clean separation between feature extraction, classification, and data loading
 
 ## Requirements
 
-Python 3.7+
-OpenCV 4.x
-NumPy
-scikit-learn
-joblib
+- Python 3.7+
+- OpenCV 4.x
+- NumPy
+- scikit-learn
+- joblib
+- matplotlib
+- seaborn
+- pandas
+- tqdm
 
 ## Installation
 
 Clone this repository:
-
 ```bash
-
 git clone https://github.com/yourusername/material-recognition.git
 cd material-recognition
 ```
 
 Install dependencies:
-
 ```bash
-
 pip install -r requirements.txt
 ```
 
 Or manually install:
 ```bash
-
-pip install numpy opencv-python scikit-learn joblib
+pip install numpy opencv-python scikit-learn joblib matplotlib seaborn pandas tqdm
 ```
 
-3. Download the FMD dataset:
+Download the FMD dataset:
 - Download from: [FMD Dataset](http://people.csail.mit.edu/lavanya/fmd.html)
 - Extract to a directory (e.g., `./datasets/FMD`)
 - Expected structure:
@@ -66,33 +68,35 @@ FMD/
 
 ## Usage
 
+### Quickstart - Evaluation and Training
+For quick evaluation and training on a new device (using all defaults):
+```bash
+python main.py
+```
+
 ### Training a Model
 
 Train a new model on the FMD dataset:
 ```bash
-
-python main.py --fmd_path ./FMD --model_name my_model
+python main.py --fmd_path ./datasets/FMD --model_name my_model
 ```
 
-## Evaluating a Model
+### Evaluating a Model
 
 Evaluate an existing model:
 ```bash
-
-python main.py --fmd_path ./FMD --model_name my_model --evaluate_only
+python main.py --fmd_path ./datasets/FMD --model_name my_model --evaluate_only
 ```
 
-## Single Image Prediction
+### Single Image Prediction
 
 Predict the material category of a single image:
 ```bash
-
 python main.py --predict path/to/image.jpg --model_name my_model
 ```
 
-With mask:
+With image masks:
 ```bash
-
 python main.py --predict path/to/image.jpg --mask path/to/mask.png --model_name my_model
 ```
 
@@ -100,19 +104,38 @@ python main.py --predict path/to/image.jpg --mask path/to/mask.png --model_name 
 
 To train without using the provided masks:
 ```bash
-
 python main.py --fmd_path ./FMD --no_masks
+```
+
+### Visualizing Results
+
+After training and evaluation, visualize the results:
+```python
+from plotting.visualize_results import generate_all_plots
+
+# Load saved predictions and labels
+import numpy as np
+y_true = np.load("true_labels.npy")
+y_pred = np.load("predictions.npy")
+
+# Generate all visualization plots
+generate_all_plots(y_true, y_pred, output_dir="plots")
+```
+
+Or run the visualization script directly:
+```bash
+cd plotting
+python visualize_results.py
 ```
 
 ## Python API
 ```python
-
 from material_recognition import MaterialRecognitionSystem, FeaturePipeline
 from material_recognition.datasets import load_fmd_dataset
 
-# Initialize system
+# Initialize system with parallel processing
 system = MaterialRecognitionSystem()
-pipeline = FeaturePipeline()
+pipeline = FeaturePipeline(n_jobs=-1)  # Use all CPU cores
 
 # Load pre-trained model
 system.load_model("material_recognition")
@@ -125,6 +148,10 @@ features = pipeline.extract_all_features(img)
 # Predict material
 label = system.predict(features)
 print(f"Predicted material: {label}")
+
+# Visualize results
+from plotting.accuracy_plots import plot_confusion_matrix
+plot_confusion_matrix(y_true, y_pred, normalize=True)
 ```
 
 ## Project Structure
@@ -143,9 +170,14 @@ material_recognition/
 ├── utils/                  # Utility functions
 │   ├── __init__.py
 │   └── image_processing.py # Image preprocessing utilities
-└── datasets/              # Data loading utilities
+├── datasets/              # Data loading utilities
+│   ├── __init__.py
+│   └── fmd_loader.py      # FMD dataset loader
+└── plotting/              # Visualization tools
     ├── __init__.py
-    └── fmd_loader.py      # FMD dataset loader
+    ├── accuracy_plots.py   # Accuracy visualizations
+    ├── analysis_plots.py   # Error analysis plots
+    └── visualize_results.py # Main plotting script
 ```
 
 ## Feature Details
@@ -164,12 +196,22 @@ The system extracts 8 types of features:
 ## Performance
 
 Expected performance on FMD dataset:
-- Overall accuracy: ~57% (with masks)
-- Overall accuracy: ~55% (without masks)
-- Training time: ~5-10 minutes (depending on hardware)
+- Overall accuracy: ~54% (with masks)
+- Overall accuracy: ~52% (without masks)
+- Training + evaluation time: ~30-40 minutes with parallel processing (depending on CPU cores)
 - Prediction time: ~0.5-1 second per image
 
 Per-category accuracy typically ranges from 40-80%, with natural materials (foliage, wood) performing better than manufactured materials (plastic, metal).
+
+## Visualization Outputs
+
+The plotting module generates:
+- **Confusion Matrix**: Normalized and raw confusion matrices showing classification patterns
+- **Per-Category Accuracy**: Bar chart showing accuracy for each material category
+- **Classification Report**: Heatmap of precision, recall, and F1-scores
+- **Error Analysis**: Top misclassification pairs and error rates by category
+
+All plots are saved as high-resolution PNGs in the `plots/` directory.
 
 ## Command-Line Arguments
 
@@ -179,6 +221,7 @@ Per-category accuracy typically ranges from 40-80%, with natural materials (foli
 - `--predict`: Path to single image for prediction
 - `--mask`: Path to mask for single image prediction
 - `--evaluate_only`: Only evaluate existing model without training
+- `--n_jobs`: Number of CPU cores to use for parallel processing (default: -1 for all cores)
 
 ## Model Storage
 
@@ -198,66 +241,22 @@ models/
 ### Modifying Feature Parameters
 
 Edit config.py to adjust:
-
 - Number of clusters per feature type
 - Grid sampling step
 - Bilateral filter parameters
 - Gabor filter scales and orientations
+- Train/Test image category sizes
 
 ### Adding New Features
 
-- Implement extractor in features/extractors.py
-- Add to pipeline in features/feature_pipeline.py
-- Update dictionary sizes in config.py
+1. Implement extractor in `features/extractors.py`
+2. Add to pipeline in `features/feature_pipeline.py`
+3. Update dictionary sizes in `config.py`
 
 ### Using Different Classifiers
 
-The modular design allows easy swapping of classifiers. Modify models/classifier.py to implement alternative classification methods.
+The modular design allows easy swapping of classifiers. Modify `models/classifier.py` to implement alternative classification methods.
 
-## Citation
+## Time Travel Days
 
-If you use this code in your research, please cite the original paper:
-```bibtex
-
-@article{sharan2013recognizing,
-  title={Recognizing materials using perceptually inspired features},
-  author={Sharan, Lavanya and Liu, Ce and Rosenholtz, Ruth and Adelson, Edward H},
-  journal={International Journal of Computer Vision},
-  volume={103},
-  number={3},
-  pages={348--371},
-  year={2013},
-  publisher={Springer}
-}
-```
-
-## Troubleshooting
-
-### Import Errors
-
-Ensure you're running from the project root directory or have installed the package properly.
-
-### Memory Issues
-
-For large datasets, consider:
-
-- Reducing batch sizes
-- Using fewer clusters in dictionaries
-- Processing images sequentially rather than in parallel
-
-### Low Accuracy
-
-Verify dataset is loaded correctly
-Ensure masks align with images
-Check that all feature extractors are working
-Consider training with more data per category
-
-### License
-
-This implementation is provided for research and educational purposes. Please refer to the original paper for any commercial use considerations.
-
-### Acknowledgments
-
-This implementation is based on the research paper "Recognizing Materials Using Perceptually Inspired Features" by Sharan et al. The Flickr Material Database (FMD) was created by the same authors.
-
-
+I will be using 4 of my time travel days for this assignment. Thank you!

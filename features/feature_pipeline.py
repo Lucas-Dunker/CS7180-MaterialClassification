@@ -4,7 +4,7 @@ Lucas Dunker, 10/18/25
 
 Recognizing Materials Using Perceptually Inspired Features
 
-Complete feature extraction pipeline for material recognition.
+A complete 8-feature extraction pipeline for material recognition.
 """
 
 import numpy as np
@@ -27,11 +27,11 @@ class FeaturePipeline:
         self, img: np.ndarray, mask: Optional[np.ndarray] = None
     ) -> Dict[str, np.ndarray]:
         """
-        Extract all features from an image.
+        Extract all features from an image, as per the reference paper.
 
         Args:
             img: Input image (BGR format)
-            mask: Optional binary mask for region of interest
+            mask: Binary mask for region of interest
 
         Returns:
             Dictionary mapping feature names to feature arrays
@@ -175,7 +175,7 @@ class FeaturePipeline:
                 features = self.extract_all_features(img, mask)
                 features_list.append(features)
         else:
-            # Parallel processing
+            # Parallel processing for faster train/test
             with mp.Pool(self.n_jobs) as pool:
                 features_list = list(
                     tqdm(
@@ -234,7 +234,7 @@ class FeaturePipeline:
                 for feat_name, feat_array in features.items():
                     features_by_type[feat_name].append(feat_array)
         else:
-            # Parallel processing
+            # Parallel processing for faster train/test
             with mp.Pool(self.n_jobs) as pool:
                 features_list = list(
                     tqdm(

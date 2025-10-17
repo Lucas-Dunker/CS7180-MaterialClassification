@@ -247,24 +247,23 @@ class FeatureExtractor:
         slice_mags = np.array(slice_mags).reshape(length, width)
         slice_oris = np.array(slice_oris).reshape(length, width)
 
-        # Divide into 6 cells
-        cell_size = length // 6
+        cells_along_length = 6
+        pixels_per_cell = length // cells_along_length
+        
         hog_features = []
-
-        for i in range(6):
-            start_row = i * cell_size
-            end_row = start_row + cell_size
-
-            cell_mag = slice_mags[start_row:end_row, :].flatten()
-            cell_ori = slice_oris[start_row:end_row, :].flatten()
-
-            if len(cell_mag) > 0:
-                hist, _ = np.histogram(
-                    cell_ori, bins=12, range=(-np.pi, np.pi), weights=cell_mag
-                )
-            else:
-                hist = np.zeros(12)
-
+        for cell_idx in range(cells_along_length):
+            start_idx = cell_idx * pixels_per_cell
+            end_idx = start_idx + pixels_per_cell
+            
+            cell_mag = slice_mags[start_idx:end_idx, :].flatten()
+            cell_ori = slice_oris[start_idx:end_idx, :].flatten()
+            
+            hist, _ = np.histogram(
+                cell_ori, 
+                bins=12, 
+                range=(-np.pi, np.pi), 
+                weights=cell_mag
+            )
             hog_features.extend(hist)
-
+        
         return np.array(hog_features, dtype=np.float32)

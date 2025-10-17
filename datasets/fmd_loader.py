@@ -17,7 +17,7 @@ def load_fmd_dataset(
     fmd_path: str, categories: Optional[List[str]] = None
 ) -> Tuple[List[np.ndarray], np.ndarray, List[np.ndarray]]:
     """
-    Load FMD dataset.
+    Load the FMD dataset.
 
     Args:
         fmd_path: Path to FMD dataset root directory
@@ -74,10 +74,10 @@ def split_dataset_per_category(
     labels: np.ndarray,
     masks: List[np.ndarray] | List[None],
     train_per_category: int = 50,
-    random_seed: int = 40,
+    random_seed: int = 43,
 ) -> Tuple:
     """
-    Split dataset with exact number of samples per category.
+    Split dataset with an exact number of samples per category.
 
     Args:
         images: List of images
@@ -139,19 +139,17 @@ def get_category_names() -> List[str]:
     ]
 
 
-def get_category_name(label: int) -> str:
-    """Get category name from label index."""
-    categories = get_category_names()
-    if 0 <= label < len(categories):
-        return categories[label]
-    else:
-        raise ValueError(f"Invalid label: {label}")
-
-
 def print_dataset_info(
     images: List[np.ndarray], labels: np.ndarray, set_name: str = "Dataset"
 ):
-    """Print dataset statistics."""
+    """
+    Print dataset statistics.
+
+    Args:
+        images: List of images
+        labels: Array of category labels
+        set_name: Name of the dataset (for display)
+    """
     print(f"\n{set_name} Statistics:")
     print(f"  Total images: {len(images)}")
     print(f"  Categories: {len(np.unique(labels))}")

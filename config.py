@@ -45,7 +45,7 @@ FMD_CATEGORIES = [
 
 TRAIN_PER_CATEGORY = 50
 
-CACHE_SIZE = 100  # For bilateral filter
+BILATERAL_CACHE_SIZE = 100
 
 MODEL_DIR = Path("./models")
 PLOT_DIR = Path("./plotting")
