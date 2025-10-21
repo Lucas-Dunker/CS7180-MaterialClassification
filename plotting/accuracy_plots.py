@@ -145,7 +145,7 @@ def plot_per_category_accuracy(
 
     viridis = plt.cm.get_cmap("viridis")
     bars = ax.bar(
-        range(len(categories)),
+        sorted_categories,
         sorted_accuracies,
         color=viridis(np.linspace(0.3, 0.9, len(categories))),
     )
@@ -174,12 +174,12 @@ def plot_per_category_accuracy(
     ax.set_xlabel("Material Category", fontsize=12)
     ax.set_ylabel("Accuracy", fontsize=12)
     ax.set_title("Per-Category Recognition Accuracy", fontsize=14, fontweight="bold")
-    ax.set_xticks(range(len(categories)))
     ax.set_ylim(0, 1.05)
+    
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
     
     ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.0%}"))
     
-    ax.legend(loc="lower right")
     ax.legend(loc="lower right")
     ax.grid(axis="y", alpha=0.3)
 
